@@ -1,0 +1,28 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shellcheck
+        run: |
+          shellcheck scripts/*.sh scripts/analysis/*.sh
+      - name: Bash syntax
+        run: |
+          bash -n scripts/*.sh scripts/analysis/*.sh
+      - name: Python/YAML sanity
+        run: |
+          python3 - <<'PY'
+          import yaml,glob,json,sys
+          for p in glob.glob('detection/sigma/*.yml'):
+              yaml.safe_load(open(p))
+              print('ok',p)
+          PY
+      - name: Docker compose config
+        run: |
+          docker compose -f docker/docker-compose.yml config >/dev/null

@@ -1,0 +1,27 @@
+<!--
+  Sysmon config fragment for Office-focused lab visibility.
+  Educational baseline; test and tune before production use.
+  Requires Sysmon installed in Windows lab VM.
+-->
+<Sysmon schemaversion="4.90">
+  <EventFiltering>
+    <ProcessCreate onmatch="include">
+      <ParentImage condition="end with">\WINWORD.EXE</ParentImage>
+      <ParentImage condition="end with">\EXCEL.EXE</ParentImage>
+      <ParentImage condition="end with">\POWERPNT.EXE</ParentImage>
+      <ParentImage condition="end with">\OUTLOOK.EXE</ParentImage>
+    </ProcessCreate>
+    <NetworkConnect onmatch="include">
+      <Image condition="end with">\WINWORD.EXE</Image>
+      <Image condition="end with">\EXCEL.EXE</Image>
+      <Image condition="end with">\POWERPNT.EXE</Image>
+      <Image condition="end with">\OUTLOOK.EXE</Image>
+    </NetworkConnect>
+    <FileCreate onmatch="include">
+      <Image condition="end with">\WINWORD.EXE</Image>
+      <Image condition="end with">\EXCEL.EXE</Image>
+      <Image condition="end with">\POWERPNT.EXE</Image>
+      <Image condition="end with">\OUTLOOK.EXE</Image>
+    </FileCreate>
+  </EventFiltering>
+</Sysmon>

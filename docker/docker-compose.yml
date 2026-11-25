@@ -1,0 +1,30 @@
+# Defensive analysis lab - isolated from host network by default.
+# Use only for files you own or are authorized to analyze.
+services:
+  analyzer:
+    build:
+      context: ./analysis
+    image: sc-lab-analyzer:local
+    container_name: sc-lab-analyzer
+    working_dir: /workspace
+    command: ["sleep", "infinity"]
+    read_only: true
+    tmpfs:
+      - /tmp:size=256m,noexec,nosuid,nodev
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - lab_isolated
+    volumes:
+      - ../samples:/workspace/samples:ro
+      - ../reports:/workspace/reports:rw
+      - ../detection:/workspace/detection:ro
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+
+networks:
+  lab_isolated:
+    driver: bridge
+    internal: true

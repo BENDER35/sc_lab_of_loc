@@ -1,0 +1,23 @@
+title: Microsoft Office Initiated Network Connection
+id: 1b6b2d9b-5f1f-4b28-9b14-3d7d0d8f4a22
+status: experimental
+description: Detects Office applications initiating network connections. Can be legitimate; correlate with document origin and user activity.
+author: SC Lab of LOC
+date: 2026-11-25
+tags:
+  - attack.command_and_control
+  - attack.t1105
+logsource:
+  category: network_connection
+  product: windows
+detection:
+  selection:
+    Image|endswith:
+      - '\WINWORD.EXE'
+      - '\EXCEL.EXE'
+      - '\POWERPNT.EXE'
+      - '\OUTLOOK.EXE'
+  condition: selection
+falsepositives:
+  - Templates, updates, cloud documents, add-ins
+level: low

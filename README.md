@@ -18,26 +18,38 @@ A starter kit for learning cybersecurity in your own local network **without tou
 .
 ├── README.md
 ├── LICENSE
+├── docker/
+│   ├── docker-compose.yml          # isolated internal-network analysis container
+│   ├── README.md
+│   └── analysis/Dockerfile
 ├── docs/
 │   ├── GUIDE.es.md
 │   ├── GUIDE.en.md
 │   ├── GUIDE.ast.md
-│   └── ETHICS_AND_SAFETY.md
+│   ├── ETHICS_AND_SAFETY.md
+│   ├── MIRROR_SETUP.md
+│   └── LAB_CHECKLIST.md
+├── lab/
+│   └── profiles/virtualbox-profile.md
 ├── scripts/
 │   ├── create_isolated_lab.sh
 │   ├── check_lab_isolation.sh
+│   ├── analysis/
+│   │   ├── analyze_sample.sh
+│   │   └── generate_report.py
 │   └── windows/
 │       ├── office_hardening.ps1
-│       └── collect_office_audit.ps1
+│       ├── collect_office_audit.ps1
+│       └── install_sysmon_lab.ps1
 ├── detection/
-│   ├── sigma/
-│   │   └── office_suspicious_child_process.yml
-│   └── yara/
-│       └── office_macro_keywords.yar
-├── examples/
-│   └── macros_lab/
-│       └── README.md
+│   ├── sigma/                      # suspicious child process, macro policy drift, office network, ASR
+│   ├── yara/                       # macro/OLE indicator rules
+│   └── sysmon/sysmon-office.xml
+├── templates/reports/lab-report-template.md
+├── samples/                        # local-only, gitignored
+├── reports/                        # local-only, gitignored
 └── .github/workflows/
+    ├── validate.yml
     ├── mirror-gitlab.yml
     └── release.yml
 ```
@@ -71,15 +83,18 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\scripts\windows\office_hardening.ps1
 ```
 
-### 4) Analyze macros safely
+### 4) Analyze macros safely (Docker, isolated)
 
-Only analyze samples you own or have explicit permission to test. Use static tools first:
+Only analyze samples you own or have explicit permission to test. The Docker profile uses an **internal** network (no external connectivity), read-only rootfs, and dropped capabilities.
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install oletools
-olevba --decode examples/macros_lab/your_sample.docm
+mkdir -p samples reports
+cp /path/to/authorized.docm samples/
+./scripts/analysis/analyze_sample.sh --file samples/authorized.docm
+python3 scripts/analysis/generate_report.py \
+  --sample samples/authorized.docm \
+  --analysis-dir reports/authorized \
+  --out reports/authorized-report.md
 ```
 
 Do **not** execute unknown macros. Do analysis in an isolated VM snapshot.

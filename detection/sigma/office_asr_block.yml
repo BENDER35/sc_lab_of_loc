@@ -1,0 +1,24 @@
+title: Defender ASR Block Related To Office
+id: 8d3f4e5a-7f6e-4f70-8f66-c2f1d1f8e123
+status: experimental
+description: Detects Microsoft Defender ASR events where Office applications are involved. Useful for validating hardening.
+author: SC Lab of LOC
+date: 2026-11-25
+tags:
+  - attack.execution
+  - attack.t1204.002
+logsource:
+  product: windows
+  service: windefend
+detection:
+  selection:
+    EventID: 1121
+    ProcessName|endswith:
+      - '\WINWORD.EXE'
+      - '\EXCEL.EXE'
+      - '\POWERPNT.EXE'
+      - '\OUTLOOK.EXE'
+  condition: selection
+falsepositives:
+  - Legitimate but risky automation blocked by policy
+level: high

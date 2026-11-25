@@ -1,0 +1,26 @@
+title: Microsoft Office Macro Security Disabled Or Weakened
+id: 5f7df6f4-3b8f-4d6b-a5db-6f9d3d3d1c21
+status: experimental
+description: Detects registry changes that may weaken Office macro protections. Educational rule; tune to your GPO baseline.
+author: SC Lab of LOC
+date: 2026-11-25
+tags:
+  - attack.defense_evasion
+  - attack.t1562.001
+logsource:
+  category: registry_set
+  product: windows
+detection:
+  selection:
+    TargetObject|contains:
+      - '\Software\Policies\Microsoft\Office\'
+      - '\Software\Microsoft\Office\'
+    TargetObject|endswith:
+      - '\Security\VBAWarnings'
+      - '\Security\blockcontentexecutionfrominternet'
+      - '\Security\ProtectedView\DisableInternetFilesInPV'
+      - '\Security\ProtectedView\DisableAttachmentsInPV'
+  condition: selection
+falsepositives:
+  - Legitimate administrative policy changes
+level: medium

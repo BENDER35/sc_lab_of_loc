@@ -15,7 +15,10 @@ venv/
 
 # Lab artifacts (never commit real samples)
 /artifacts/
-/samples/
+/samples/*
+!/samples/.gitkeep
+/reports/*
+!/reports/.gitkeep
 *.docm
 *.xlsm
 *.pptm
