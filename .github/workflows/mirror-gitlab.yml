@@ -33,4 +33,12 @@ jobs:
           fi
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git remote add gitlab "$GITLAB_MIRROR_URL"
+          git fetch gitlab --refs --tags || true
+          # Loop/dup guard: skip if same commit already on GitLab for this ref
+          LOCAL_SHA=$(git rev-parse HEAD)
+          REMOTE_SHA=$(git ls-remote gitlab "refs/heads/${GITHUB_REF_NAME}" | awk '{print $1}' || true)
+          if [ -n "$REMOTE_SHA" ] && [ "$LOCAL_SHA" = "$REMOTE_SHA" ]; then
+            echo "GitLab already has $LOCAL_SHA for ${GITHUB_REF_NAME}; skipping."
+            exit 0
+          fi
           git push --prune gitlab +refs/remotes/origin/*:refs/heads/* +refs/tags/*:refs/tags/*
