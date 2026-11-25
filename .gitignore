@@ -1,0 +1,31 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Lab artifacts (never commit real samples)
+/artifacts/
+/samples/
+*.docm
+*.xlsm
+*.pptm
+*.bin
+*.exe
+*.dll
+
+# Release bundles
+/dist/
+*.zip
+
+# Logs
+*.log

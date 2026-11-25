@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build zip
+        run: |
+          set -euo pipefail
+          NAME="sc_lab_of_loc-${GITHUB_REF_NAME}"
+          mkdir -p dist
+          zip -r "dist/${NAME}.zip" . \
+            -x '*.git*' \
+            -x 'dist/*' \
+            -x '*.venv/*' \
+            -x '__pycache__/*' \
+            -x '*.log'
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true
